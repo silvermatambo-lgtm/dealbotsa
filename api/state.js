@@ -24,7 +24,7 @@ function clean(s){
  }));
  return {products,watch:arr('watch',120).filter(id),
  rules:arr('rules',80).filter(r=>r&&id(r.id)&&typeof r.name==='string').map(r=>({
- id:r.id,name:r.name.slice(0,80),cat:String(r.cat||'All categories').slice(0,40),
+ id:r.id,name:r.name.slice(0,80),productId:(r.productId===null||r.productId===undefined||r.productId==='')?null:String(r.productId).slice(0,50),cat:String(r.cat||'All categories').slice(0,40),
  ret:String(r.ret||'All stores').slice(0,40),min:Math.max(0,Math.min(100,Number(r.min)||0)),
  max:Math.max(0,Math.min(1000000,Number(r.max)||0)),active:r.active!==false})),
  notifications:arr('notifications',60).filter(n=>n&&typeof n.title==='string').map(n=>({
