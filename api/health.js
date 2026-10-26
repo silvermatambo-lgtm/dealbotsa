@@ -12,9 +12,11 @@ module.exports = async function handler(req,res){
   let tcp='not checked';let client;
   try{
    const u=new URL(process.env.DATABASE_URL);
+   const sslName=u.hostname.replace('-pooler','');
    u.hostname='eu-west-2.aws.neon.tech';
+   u.searchParams.delete('sslmode');u.searchParams.delete('channel_binding');
    u.searchParams.set('options','endpoint=ep-bitter-recipe-zajc7rma');
-   client=new (require('pg').Client)({connectionString:u.toString(),ssl:{rejectUnauthorized:true},connectionTimeoutMillis:5000});
+   client=new (require('pg').Client)({connectionString:u.toString(),ssl:{rejectUnauthorized:true,servername:sslName},connectionTimeoutMillis:5000});
    await client.connect();
    const p=await client.query('SELECT count(*)::int AS demo_visitors FROM demo_guests');
    await client.end();
