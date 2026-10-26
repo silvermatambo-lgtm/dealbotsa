@@ -7,5 +7,11 @@ module.exports = async function handler(req,res) {
   const sql=neon(process.env.DATABASE_URL);
   const rows=await sql.query("SELECT current_timestamp AS checked_at, (SELECT count(*)::int FROM demo_guests) AS demo_visitors");
   return res.status(200).json({ok:true,database:'connected',checkedAt:rows[0].checked_at,visitors:rows[0].demo_visitors,sourceConnections:{takealot:'not configured',amazon:'not configured',vodabucks:'not configured',checkers:'not configured'},telegram:process.env.TELEGRAM_BOT_TOKEN?'configured':'not configured'});
- }catch(e){console.error('DB health check failed',e.message);return res.status(503).json({ok:false,database:'unavailable',message:'Database temporarily unavailable',diagnostic:e.code||e.name||'unknown',detail:String(e.message||'').slice(0,180),reason:String(e.cause?.message||'').slice(0,180),reasonCode:e.cause?.code||null});}
+ }catch(e){
+  console.error('DB health check failed',e.message);
+  let dnsResult='not checked', networkResult='not checked';
+  try{const h=new URL(process.env.DATABASE_URL).hostname;await require('node:dns').promises.lookup(h);dnsResult='resolved'}catch(d){dnsResult=d.code||d.name}
+  try{const x=await fetch('https://api.github.com',{signal:AbortSignal.timeout(4000)});networkResult=String(x.status)}catch(n){networkResult=n.cause?.code||n.code||n.name}
+  return res.status(503).json({ok:false,database:'unavailable',diagnostic:e.name||'unknown',detail:String(e.message||'').slice(0,150),dnsResult,networkResult});
+ }
 };
