@@ -22,6 +22,6 @@ module.exports = async function handler(req,res){
    await client.end();
    return res.status(200).json({ok:true,database:'connected',transport:'Postgres TCP',visitors:p.rows[0].demo_visitors,retailerFeeds:'not configured'});
   }catch(err){tcp=err.code||err.name||'failed';tlsDetail=String(err.message||'').slice(0,250);try{if(client)await client.end()}catch(_){}}
-  return res.status(503).json({ok:false,database:'unavailable',message:'Cloud database connectivity is currently unavailable',tcpStatus:tcp,tlsDetail});
+  return res.status(503).json({ok:false,database:'unavailable',message:'Cloud database connectivity is currently unavailable',tcpStatus:tcp});
  }
 };
