@@ -4,7 +4,8 @@
   "private": true,
   "description": "DealBotSA prototype PWA with Neon persistence",
   "dependencies": {
-    "@neondatabase/serverless": "1.2.0"
+    "@neondatabase/serverless": "1.2.0",
+    "pg": "8.23.1"
   },
   "engines": {
     "node": ">=20"
