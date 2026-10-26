@@ -1,0 +1,12 @@
+{
+  "name": "dealbotsa",
+  "version": "0.4.0",
+  "private": true,
+  "description": "DealBotSA prototype PWA with Neon persistence",
+  "dependencies": {
+    "@neondatabase/serverless": "1.2.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
