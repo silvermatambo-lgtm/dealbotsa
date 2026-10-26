@@ -1,5 +1,5 @@
-const CACHE='dealbotsa-static-v5';
-const ASSETS=['/','/manifest.webmanifest','/icon.svg','/icons/icon-192.png','/icons/icon-512.png'];
+const CACHE='dealbotsa-static-v6';
+const ASSETS=['/','/manifest.webmanifest','/icon.svg','/icons/icon-192.png','/icons/icon-512.png','/images/deals/bluetooth-speaker.webp','/images/deals/wireless-headphones.webp','/images/deals/wireless-mouse.webp','/images/deals/mechanical-keyboard.webp','/images/deals/smartphone.webp','/images/deals/smartwatch.webp','/images/deals/air-fryer.webp','/images/deals/blender.webp','/images/deals/rc-car.webp','/images/deals/teddy-bear.webp'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{
