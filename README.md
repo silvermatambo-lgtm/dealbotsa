@@ -51,3 +51,20 @@ No database password, bot token or account secret belongs in frontend code.
 This repository is a prototype for client testing; do not represent synthetic deal scores as real market prices.
 
 Developed by WebDevPro.
+
+## Realistic product image collection (October 2026)
+
+Ten product photographs supplied by WebDevPro and optimized as WebP thumbnails are tracked in `public/images/deals/` and are served at `/images/deals/<filename>.webp` on Vercel:
+
+- `bluetooth-speaker.webp`
+- `wireless-headphones.webp`
+- `wireless-mouse.webp`
+- `mechanical-keyboard.webp`
+- `smartphone.webp`
+- `smartwatch.webp`
+- `air-fryer.webp`
+- `blender.webp`
+- `rc-car.webp`
+- `teddy-bear.webp`
+
+The app uses these realistic images in dashboard rows, product cards and detail panels. Assets are concept illustrations rather than verified retailer listing photos. The PWA precaches them for offline previews. The footer credits WebDevPro.co.za and links to the business contact number +27 81 215 9792.
