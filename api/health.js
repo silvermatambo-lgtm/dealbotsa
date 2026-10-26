@@ -9,7 +9,7 @@ module.exports = async function handler(req,res){
   return res.status(200).json({ok:true,database:'connected',checkedAt:rows[0].checked_at,visitors:rows[0].demo_visitors,retailerFeeds:'not configured',telegram:process.env.TELEGRAM_BOT_TOKEN?'configured':'not configured'});
  }catch(e){
   console.error('DealBotSA Neon HTTP health check failed',e.code||e.name||'unknown');
-  let tcp='not checked';let client;
+  let tcp='not checked',tlsDetail='';let client;
   try{
    const u=new URL(process.env.DATABASE_URL);
    const sslName=u.hostname.replace('-pooler','');
@@ -21,7 +21,7 @@ module.exports = async function handler(req,res){
    const p=await client.query('SELECT count(*)::int AS demo_visitors FROM demo_guests');
    await client.end();
    return res.status(200).json({ok:true,database:'connected',transport:'Postgres TCP',visitors:p.rows[0].demo_visitors,retailerFeeds:'not configured'});
-  }catch(err){tcp=err.code||err.name||'failed';try{if(client)await client.end()}catch(_){}}
-  return res.status(503).json({ok:false,database:'unavailable',message:'Cloud database connectivity is currently unavailable',tcpStatus:tcp});
+  }catch(err){tcp=err.code||err.name||'failed';tlsDetail=String(err.message||'').slice(0,250);try{if(client)await client.end()}catch(_){}}
+  return res.status(503).json({ok:false,database:'unavailable',message:'Cloud database connectivity is currently unavailable',tcpStatus:tcp,tlsDetail});
  }
 };
