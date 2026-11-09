@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verified retailer data | DealBotSA</title>
+<meta name="description" content="DealBotSA partner data integration. Only approved retailer feeds can show live prices.">
+<meta name="robots" content="noindex,follow"><meta name="theme-color" content="#101d1b">
+<link rel="icon" href="/icon.svg">
+<style>
+:root{color-scheme:light;--ink:#142421;--muted:#61766d;--border:#e1eadf;--bg:#f5f8f4;--lime:#c5f278;--green:#17392a}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--bg);font:15px/1.55 system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+a{color:inherit}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.6;cursor:wait}
+header{background:#101d1b;color:#fff;padding:18px max(24px,calc((100vw - 1160px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font-size:21px;font-weight:800;text-decoration:none;letter-spacing:-.7px}.logo span{color:var(--lime)}
+.back{color:#d6e3d6;font-size:13px;text-decoration:none}.back:hover{text-decoration:underline}
+main{max-width:1160px;padding:34px 24px 70px;margin:auto}
+.hero{background:linear-gradient(115deg,#152d23,#28533a);border-radius:22px;padding:34px;color:#fff}
+.eyebrow{color:#d7f6b5;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+h1{font-size:clamp(28px,4vw,43px);line-height:1.15;letter-spacing:-1px;margin:12px 0}
+.hero p{max-width:780px;color:#e0ebdf;margin:0}
+.search{display:flex;gap:9px;flex-wrap:wrap;margin:24px 0 8px}
+.search input{padding:15px;border-radius:11px;border:2px solid #d7ead1;min-width:190px;flex:1;background:#fff;color:#172d21}
+.search button,.chip{border:0;border-radius:11px;background:var(--lime);color:#14281b;font-weight:800;padding:12px 21px}
+.hints{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}.chip{background:#eaf2e8;padding:8px 14px;font-size:12px}
+.status{border:1px solid var(--border);background:#fff;border-radius:15px;padding:21px;margin:22px 0;display:flex;gap:14px}
+.status b{display:block;font-size:17px;margin-bottom:3px}.status p{color:var(--muted);margin:0}.status .dot{width:12px;height:12px;flex:none;border-radius:100%;background:#d5a955;margin-top:8px}.status.live .dot{background:#339b60}
+.heading{display:flex;align-items:end;justify-content:space-between;gap:10px;margin:26px 0 16px}.heading h2{margin:0;font-size:22px}.heading small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.card{background:white;border:1px solid var(--border);border-radius:17px;overflow:hidden;box-shadow:0 10px 32px #203d2c0a;display:flex;flex-direction:column}
+.product-img{height:180px;width:100%;object-fit:contain;background:#f0f5ed}.no-img{height:180px;display:grid;place-items:center;font-size:42px;background:#f0f5ed}
+.card-body{padding:18px;display:flex;flex-direction:column;gap:9px;flex:1}
+.store{color:#567c5c;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.35px}
+.card h3{font-size:15px;line-height:1.45;margin:0;min-height:43px}
+.price{font-size:26px;font-weight:800}.old{color:#829388;text-decoration:line-through;font-size:13px;margin-left:7px}
+.meta{font-size:12px;color:var(--muted)}.promos{font-size:12px;color:#326d45}
+.buy{margin-top:auto;display:block;text-align:center;background:#1a3828;color:#fff;border-radius:9px;text-decoration:none;padding:10px;font-weight:700;font-size:13px}
+.notice{background:#edf3eb;color:#52665d;padding:16px 19px;border-radius:12px;font-size:12px;margin-top:25px}
+footer{border-top:1px solid var(--border);padding:25px;text-align:center;color:var(--muted);font-size:12px}
+:focus-visible{outline:3px solid #649a62;outline-offset:2px}
+</style>
+</head>
+<body>
+<header><a class="logo" href="/">DealBot<span>SA</span></a><a class="back" href="/">← Back to main dashboard</a></header>
+<main>
+<section class="hero">
+<div class="eyebrow">Stage 2 · Authorized retailer feed</div>
+<h1>Find genuine prices, not demo discounts.</h1>
+<p>This separate live-data page will display real product prices only when DealBotSA has approved data-use rights and an authenticated provider connection. The main dashboard remains a clearly labelled demonstration.</p>
+</section>
+<form class="search" id="search-form">
+<label for="query" style="position:absolute;left:-9999px">Search Checkers products</label>
+<input id="query" name="q" minlength="2" maxlength="70" required value="milk" placeholder="Search for milk, coffee, bread..." autocomplete="off">
+<button id="go" type="submit">Search Checkers</button>
+</form>
+<div class="hints" aria-label="Example searches">
+<button type="button" class="chip" data-query="milk">Milk</button>
+<button type="button" class="chip" data-query="coffee">Coffee</button>
+<button type="button" class="chip" data-query="bread">Bread</button>
+<button type="button" class="chip" data-query="rice">Rice</button>
+</div>
+<div class="status" id="status" role="status" aria-live="polite"><span class="dot"></span><div><b id="state-title">Checking integration status…</b><p id="state-message">Verifying provider access.</p></div></div>
+<div class="heading"><h2 id="results-title">Checkers product feed</h2><small id="retrieved"></small></div>
+<div class="grid" id="results" aria-live="polite"></div>
+<div class="notice">The Checkers reference store covered by the proposed data provider is Sixty60 Rondebosch, Cape Town, not every Checkers branch. Prices and stock may vary by area. Data is supplied independently; DealBotSA does not claim retailer affiliation. Retailer data cannot be republished until the applicable rights are confirmed.</div>
+</main>
+<footer>Developed by <a href="https://webdevpro.co.za/" target="_blank" rel="noopener noreferrer">WebDevPro</a> · <a href="https://wa.me/27812159792" target="_blank" rel="noopener noreferrer">+27 81 215 9792</a></footer>
+<script>
+(function(){
+  const form=document.getElementById('search-form'), query=document.getElementById('query'),
+        status=document.getElementById('status'), title=document.getElementById('state-title'),
+        message=document.getElementById('state-message'), results=document.getElementById('results'),
+        resultsTitle=document.getElementById('results-title'), stamp=document.getElementById('retrieved'),
+        go=document.getElementById('go');
+  const zar=n=>new Intl.NumberFormat('en-ZA',{style:'currency',currency:'ZAR'}).format(n);
+  const node=(tag,cls,value)=>{let el=document.createElement(tag);if(cls)el.className=cls;if(value!=null)el.textContent=value;return el;};
+  function state(isLive,heading,description){status.classList.toggle('live',!!isLive);title.textContent=heading;message.textContent=description;}
+  function show(products){
+    results.replaceChildren();
+    if(!products.length){results.append(node('p','meta','No matching live listings returned by the provider for this search.'));return;}
+    for(const p of products){
+      const card=node('article','card');
+      if(p.image){const img=node('img','product-img');img.src=p.image;img.alt=p.name;img.loading='lazy';img.referrerPolicy='no-referrer';img.onerror=()=>img.replaceWith(node('div','no-img','🛒'));card.append(img);}
+      else card.append(node('div','no-img','🛒'));
+      const body=node('div','card-body');
+      body.append(node('span','store','Checkers Sixty60'),node('h3','',p.name));
+      const money=node('div','price',zar(p.price));
+      if(p.wasPrice>p.price) money.append(node('span','old',zar(p.wasPrice)));
+      body.append(money);
+      if(p.memberPrice!=null)body.append(node('div','promos','Loyalty/member price: '+zar(p.memberPrice)+' (eligibility may apply)'));
+      body.append(node('div','meta',p.stock==='in_stock'?'In stock at reference store':p.stock==='out_of_stock'?'Out of stock at reference store':'Stock not confirmed'));
+      if(p.pricedAt)body.append(node('div','meta','Area: '+p.pricedAt));
+      if(p.fetchedAt){const d=new Date(p.fetchedAt);if(!isNaN(d))body.append(node('div','meta','Provider updated: '+d.toLocaleString('en-ZA')));}
+      if(p.promotions?.length)body.append(node('div','promos',p.promotions.join(' · ')));
+      if(p.productUrl){const a=node('a','buy','View on retailer');a.href=p.productUrl;a.target='_blank';a.rel='noopener noreferrer sponsored';body.append(a);}
+      card.append(body);results.append(card);
+    }
+  }
+  async function search(){
+    const q=query.value.trim();if(q.length<2)return;
+    go.disabled=true;results.replaceChildren();stamp.textContent='';
+    state(false,'Checking authorized retailer data…','Contacting the DealBotSA server without exposing partner credentials.');
+    try{
+      const r=await fetch('/api/live-deals?q='+encodeURIComponent(q)+'&limit=10',{cache:'no-store'});
+      const d=await r.json();
+      if(!r.ok||!d.ok){state(false,'Live data unavailable',d.error||'The retailer service is not responding.');return;}
+      if(!d.live){state(false,'Integration awaiting activation',d.message||'Approved provider access is required.');resultsTitle.textContent='No live prices are being displayed';return;}
+      state(true,'Live retailer prices retrieved','Source: '+d.source+'. Prices and stock are specific to the reference store.');
+      resultsTitle.textContent='Live results for “‘+q+'”';stamp.textContent='Checked '+new Date(d.retrievedAt).toLocaleString('en-ZA');
+      show(d.products||[]);
+    }catch(_){state(false,'Connection error','Could not reach the DealBotSA live-feed endpoint. Please try again.');}
+    finally{go.disabled=false;}
+  }
+  form.addEventListener('submit',e=>{e.preventDefault();search();});
+  document.querySelectorAll('[data-query]').forEach(b=>b.addEventListener('click',()=>{query.value=b.dataset.query;search();}));
+  search();
+})();
+</script>
+</body>
+</html>
