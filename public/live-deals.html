@@ -105,7 +105,7 @@ footer{border-top:1px solid var(--border);padding:25px;text-align:center;color:v
       if(!r.ok||!d.ok){state(false,'Live data unavailable',d.error||'The retailer service is not responding.');return;}
       if(!d.live){state(false,'Integration awaiting activation',d.message||'Approved provider access is required.');resultsTitle.textContent='No live prices are being displayed';return;}
       state(true,'Live retailer prices retrieved','Source: '+d.source+'. Prices and stock are specific to the reference store.');
-      resultsTitle.textContent='Live results for “‘+q+'”';stamp.textContent='Checked '+new Date(d.retrievedAt).toLocaleString('en-ZA');
+      resultsTitle.textContent='Live results for: '+q;stamp.textContent='Checked '+new Date(d.retrievedAt).toLocaleString('en-ZA');
       show(d.products||[]);
     }catch(_){state(false,'Connection error','Could not reach the DealBotSA live-feed endpoint. Please try again.');}
     finally{go.disabled=false;}
