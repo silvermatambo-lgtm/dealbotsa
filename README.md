@@ -68,3 +68,23 @@ Ten product photographs supplied by WebDevPro and optimized as WebP thumbnails a
 - `teddy-bear.webp`
 
 The app uses these realistic images in dashboard rows, product cards and detail panels. Assets are concept illustrations rather than verified retailer listing photos. The PWA precaches them for offline previews. The footer credits WebDevPro.co.za and links to the business contact number +27 81 215 9792.
+
+## Stage 2 — Permission-gated live retailer feed (November 2026)
+
+A new **Live retailer prices** link opens `/live-deals.html` and calls `GET /api/live-deals?q=milk&limit=10`. The browser never receives a provider API key. The backend is hard-pinned to the **AZ Labs Checkers** source and transforms provider product records into name, current price, optional was/loyalty price, stock state, promotions, and origin timestamps. It never substitutes demo prices. The existing dashboard stays clearly marked as a simulation.
+
+**Important: not activated yet.** AZ Labs explicitly states that an API subscription alone does **not** grant permission to store or republish retailer content. Do not switch on price publication until DealBotSA has written rights appropriate for a public price comparison site and has checked any applicable retailer restrictions. AZ Labs data is for the Rondebosch Sixty60 reference store, not all South African branches.
+
+Production Vercel configuration (set directly in Vercel; never commit credentials):
+
+1. Obtain and document consent/licensing with AZ Labs and any relevant rights holders. See https://azlabs.co.za/products/grocery-api .
+2. Obtain an AZ Labs API key from the provider (Free tier is for evaluation, with usage limits).
+3. Add `AZLABS_API_KEY` as a **server-side** encrypted environment variable.
+4. **Only after rights are confirmed**, set `AZLABS_PUBLISHING_APPROVED=true` in the Vercel production environment.
+5. Redeploy Vercel and test `/api/live-deals?q=milk`, then the live-search page.
+
+Without either prerequisite the endpoint returns `live:false` with a clear status, without calling the provider. Upstream errors and quota failures also never fall back to synthetic offers. This feed is user-initiated live search; it does **not** yet implement scheduled scans, stock verification across branches, automatic price-change alerts, or persistence of provider data. Those require an explicit data retention licence and the next stages.
+
+Run adapter tests locally with `node --test test/live-deals.test.js`.
+
+**Retailer-source evaluation:** Takealot's published Marketplace API supports seller listings, not third-party consumer price comparison. Amazon's official Creators API locale table lists Saudi Arabia (SA), not South Africa/amazon.co.za, so do not assume ZA pricing access. VodaPay's developer API is for payments, not the VodaBucks product catalogue. AZ Labs exposes a documented live Checkers grocery search endpoint but requires permission for republication. These are separate service and data-rights questions.
